@@ -1,0 +1,55 @@
+<html>
+  <script>
+    function maketrace(name) {
+      // performance.mark(name + "start");
+      return {
+        end: function() {
+          // performance.mark(name + "end");
+          // performance.measure(name, name + "start", name + "end");
+        }
+      };
+    }
+
+    function wait(t) {
+      time = Date.now();
+      while (Date.now() < time + t);
+    }
+
+    function oneSecondTask(n) {
+      return function() {
+        trace = maketrace("1s task #" + n);
+        console.log("running one second task #" + n);
+        wait(1000);
+        trace.end();
+      };
+    }
+
+    window.addEventListener("mousedown", function() {
+      console.log("queuing many 1s tasks");
+      setTimeout(oneSecondTask(1));
+      setTimeout(oneSecondTask(2));
+      setTimeout(oneSecondTask(3));
+      setTimeout(oneSecondTask(4));
+      setTimeout(oneSecondTask(5));
+      setTimeout(oneSecondTask(6));
+      setTimeout(oneSecondTask(7));
+    });
+    function onClick() {
+      trace = maketrace("click Handler");
+      child = document.createElement("div");
+      child.innerHTML = "Hello2";
+      document.body.appendChild(child);
+      console.log("mouse click event");
+      window.requestAnimationFrame(function() {
+        trace = maketrace("render");
+        console.log("DOM rendered");
+        wait(500);
+        trace.end();
+      });
+      wait(500);
+      trace.end();
+    }
+    window.addEventListener("click", onClick);
+  </script>
+  <body></body>
+</html>
